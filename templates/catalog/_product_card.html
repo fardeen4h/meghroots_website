@@ -1,0 +1,13 @@
+<a href="{{ product.get_absolute_url }}"
+   class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden block">
+  {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-56 object-cover">
+  {% endif %}
+  <div class="p-4">
+    <h3 class="font-semibold text-lg">{{ product.name }}</h3>
+    <p class="text-sm text-bark/70">{{ product.tagline }}</p>
+    {% if product.starting_price %}
+      <p class="mt-2 font-bold text-forest">From ₹{{ product.starting_price }}</p>
+    {% endif %}
+  </div>
+</a>

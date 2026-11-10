@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="bg-forest text-cream">
+  <div class="max-w-6xl mx-auto px-4 py-20 text-center">
+    <h1 class="text-4xl md:text-5xl font-bold">From the hills of Meghalaya to your kitchen</h1>
+    <p class="mt-4 text-lg max-w-2xl mx-auto">
+      Lakadong turmeric, pepper, cinnamon and heritage rice, grown by hill farmers and packed with care.
+    </p>
+    <a href="{% url 'catalog:product_list' %}"
+       class="inline-block mt-8 bg-turmeric text-bark font-semibold px-8 py-3 rounded-full hover:opacity-90">
+      Shop now
+    </a>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <h2 class="text-2xl font-bold mb-6">Our products</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for product in products %}
+      {% include "catalog/_product_card.html" %}
+    {% empty %}
+      <p>Products coming soon.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

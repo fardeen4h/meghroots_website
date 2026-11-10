@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Shop | meghRoots{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+  <h1 class="text-3xl font-bold mb-6">{% if category %}{{ category.name }}{% else %}All products{% endif %}</h1>
+
+  <div class="flex flex-wrap gap-3 mb-8 text-sm">
+    <a href="{% url 'catalog:product_list' %}"
+       class="px-4 py-1.5 rounded-full border border-forest {% if not category %}bg-forest text-cream{% endif %}">All</a>
+    {% for c in categories %}
+      <a href="{% url 'catalog:category' c.slug %}"
+         class="px-4 py-1.5 rounded-full border border-forest {% if category == c %}bg-forest text-cream{% endif %}">{{ c.name }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for product in products %}
+      {% include "catalog/_product_card.html" %}
+    {% empty %}
+      <p>No products yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
