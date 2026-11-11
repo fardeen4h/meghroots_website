@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Your cart | meghRoots{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-10">
+  <h1 class="text-3xl font-bold mb-6">Your cart</h1>
+
+  {% if cart|length %}
+    <div class="bg-white rounded-xl shadow divide-y">
+      {% for item in cart %}
+        <div class="p-4 flex flex-wrap items-center gap-4 justify-between">
+          <div class="flex items-center gap-4">
+            {% if item.variant.product.image %}
+              <img src="{{ item.variant.product.image.url }}" alt="" class="w-20 h-20 object-cover rounded-lg">
+            {% endif %}
+            <div>
+              <a href="{{ item.variant.product.get_absolute_url }}" class="font-semibold hover:underline">
+                {{ item.variant.product.name }}
+              </a>
+              <p class="text-sm text-bark/70">{{ item.variant.label }} &middot; ₹{{ item.price }} each</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <form method="post" action="{% url 'cart:update' item.variant.id %}" class="flex items-center gap-2">
+              {% csrf_token %}
+              <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                     max="{{ item.variant.stock }}" class="w-16 border rounded-lg px-2 py-1">
+              <button class="text-sm border border-forest text-forest rounded-full px-3 py-1 hover:bg-forest hover:text-cream">
+                Update
+              </button>
+            </form>
+            <p class="font-semibold w-24 text-right">₹{{ item.total }}</p>
+            <form method="post" action="{% url 'cart:remove' item.variant.id %}">
+              {% csrf_token %}
+              <button class="text-sm text-red-600 hover:underline">Remove</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+      <a href="{% url 'catalog:product_list' %}" class="text-forest hover:underline">&larr; Continue shopping</a>
+      <div class="text-right">
+        <p class="text-lg">Subtotal: <strong>₹{{ cart.get_total_price }}</strong></p>
+        <p class="text-sm text-bark/70">Shipping is calculated at checkout.</p>
+        <a href="{% url 'orders:checkout' %}"
+           class="inline-block mt-3 bg-turmeric text-bark font-semibold px-8 py-3 rounded-full hover:opacity-90">
+          Proceed to checkout
+        </a>
+      </div>
+    </div>
+  {% else %}
+    <p class="mb-4">Your cart is empty.</p>
+    <a href="{% url 'catalog:product_list' %}" class="inline-block bg-turmeric text-bark font-semibold px-6 py-2 rounded-full">
+      Browse products
+    </a>
+  {% endif %}
+</div>
+{% endblock %}

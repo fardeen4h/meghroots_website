@@ -5,6 +5,8 @@ from django.conf.urls.static import static # pyright: ignore[reportMissingModule
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("cart/", include("cart.urls")),
+    path("orders/", include("orders.urls")),
     path("", include("core.urls")),
     path("", include("catalog.urls")),
 ]

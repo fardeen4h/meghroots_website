@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_number }} | meghRoots{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-10">
+  <div class="bg-white rounded-xl shadow p-8">
+    <h1 class="text-3xl font-bold text-forest">Thank you, {{ order.full_name }}!</h1>
+    <p class="mt-2">
+      Your order <strong>{{ order.order_number }}</strong> has been placed.
+      {% if order.payment_method == 'cod' %}Please keep the amount ready for cash on delivery.{% endif %}
+    </p>
+
+    <h2 class="font-semibold mt-8 mb-2">Items</h2>
+    <ul class="divide-y text-sm">
+      {% for item in order.items.all %}
+        <li class="py-2 flex justify-between">
+          <span>{{ item.product_name }} ({{ item.variant_label }}) &times; {{ item.quantity }}</span>
+          <span>₹{{ item.line_total }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <div class="mt-4 space-y-1 text-sm">
+      <p class="flex justify-between"><span>Subtotal</span><span>₹{{ order.subtotal }}</span></p>
+      <p class="flex justify-between"><span>Shipping</span><span>{% if order.shipping_cost == 0 %}Free{% else %}₹{{ order.shipping_cost }}{% endif %}</span></p>
+      <p class="flex justify-between font-bold text-base pt-2 border-t"><span>Total</span><span>₹{{ order.total }}</span></p>
+    </div>
+
+    <h2 class="font-semibold mt-8 mb-2">Delivering to</h2>
+    <p class="text-sm">
+      {{ order.full_name }}<br>
+      {{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}<br>
+      {{ order.city }}, {{ order.state }} {{ order.pincode }}<br>
+      Phone: {{ order.phone }}
+    </p>
+
+    <a href="{% url 'catalog:product_list' %}"
+       class="inline-block mt-8 bg-turmeric text-bark font-semibold px-6 py-2 rounded-full">
+      Continue shopping
+    </a>
+  </div>
+</div>
+{% endblock %}

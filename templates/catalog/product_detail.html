@@ -12,29 +12,43 @@
     <p class="mt-2 text-bark/70">{{ product.tagline }}</p>
 
     <p id="price" class="text-3xl font-bold text-forest mt-6">
-      {% with first=variants.first %}{% if first %}₹{{ first.price }}{% endif %}{% endwith %}
+      {% if default_variant %}₹{{ default_variant.price }}{% endif %}
     </p>
 
-    <div class="mt-4 space-y-2">
-      {% for v in variants %}
-        <label class="flex items-center justify-between border rounded-lg px-4 py-3 cursor-pointer bg-white">
-          <span>
-            <input type="radio" name="variant" value="{{ v.id }}" data-price="{{ v.price }}"
-                   data-amazon="{{ v.amazon_url }}"
-                   {% if forloop.first %}checked{% endif %} {% if v.stock == 0 %}disabled{% endif %}>
-            <span class="ml-2">{{ v.label }}</span>
-          </span>
-          <span class="text-sm">
-            ₹{{ v.price }}
-            {% if v.stock == 0 %}<span class="text-red-600 ml-2">Out of stock</span>{% endif %}
-          </span>
-        </label>
-      {% endfor %}
-    </div>
+    <form method="post" action="{% url 'cart:add' %}">
+      {% csrf_token %}
+      <div class="mt-4 space-y-2">
+        {% for v in variants %}
+          <label class="flex items-center justify-between border rounded-lg px-4 py-3 cursor-pointer bg-white">
+            <span>
+              <input type="radio" name="variant" value="{{ v.id }}" data-price="{{ v.price }}"
+                     data-amazon="{{ v.amazon_url }}"
+                     {% if v == default_variant %}checked{% endif %}
+                     {% if v.stock == 0 %}disabled{% endif %}>
+              <span class="ml-2">{{ v.label }}</span>
+            </span>
+            <span class="text-sm">
+              ₹{{ v.price }}
+              {% if v.stock == 0 %}<span class="text-red-600 ml-2">Out of stock</span>{% endif %}
+            </span>
+          </label>
+        {% endfor %}
+      </div>
 
-    <button disabled class="mt-6 w-full bg-turmeric text-bark font-semibold py-3 rounded-full opacity-60">
-      Add to cart (coming in Phase 3)
-    </button>
+      {% if default_variant %}
+        <div class="mt-4 flex items-center gap-3">
+          <label for="quantity" class="text-sm">Quantity</label>
+          <input id="quantity" type="number" name="quantity" value="1" min="1" max="20"
+                 class="w-20 border rounded-lg px-2 py-1">
+        </div>
+        <button type="submit"
+                class="mt-6 w-full bg-turmeric text-bark font-semibold py-3 rounded-full hover:opacity-90">
+          Add to cart
+        </button>
+      {% else %}
+        <p class="mt-6 text-red-600 font-semibold">Currently out of stock.</p>
+      {% endif %}
+    </form>
 
     <a id="amazon-btn" href="#" target="_blank" rel="noopener noreferrer nofollow"
        class="hidden mt-3 block text-center w-full border-2 border-forest text-forest font-semibold py-3 rounded-full hover:bg-forest hover:text-cream transition">

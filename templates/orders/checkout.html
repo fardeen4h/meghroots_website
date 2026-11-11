@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Checkout | meghRoots{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+  <h1 class="text-3xl font-bold mb-6">Checkout</h1>
+
+  <div class="grid md:grid-cols-3 gap-8">
+    <form method="post" class="md:col-span-2 bg-white rounded-xl shadow p-6">
+      {% csrf_token %}
+      <h2 class="text-xl font-semibold mb-4">Delivery details</h2>
+
+      {% if form.non_field_errors %}
+        <div class="bg-red-100 text-red-800 rounded-lg px-4 py-3 mb-4 text-sm">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        {% for field in form %}
+          <div class="{% if field.name == 'address_line1' or field.name == 'address_line2' or field.name == 'notes' %}sm:col-span-2{% endif %}">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-1">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+              <p class="text-red-600 text-sm mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <h2 class="text-xl font-semibold mt-8 mb-2">Payment</h2>
+      <p class="text-sm bg-forest/10 rounded-lg px-4 py-3">
+        Cash on delivery. You pay when your order arrives. Online payment (UPI / cards) is coming soon.
+      </p>
+
+      <button type="submit"
+              class="mt-6 w-full bg-turmeric text-bark font-semibold py-3 rounded-full hover:opacity-90">
+        Place order
+      </button>
+    </form>
+
+    <aside class="bg-white rounded-xl shadow p-6 h-fit">
+      <h2 class="text-xl font-semibold mb-4">Order summary</h2>
+      <ul class="divide-y text-sm">
+        {% for item in items %}
+          <li class="py-2 flex justify-between gap-2">
+            <span>{{ item.variant.product.name }} ({{ item.variant.label }}) &times; {{ item.quantity }}</span>
+            <span>₹{{ item.total }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+      <div class="mt-4 space-y-1 text-sm">
+        <p class="flex justify-between"><span>Subtotal</span><span>₹{{ subtotal }}</span></p>
+        <p class="flex justify-between"><span>Shipping</span><span>{% if shipping == 0 %}Free{% else %}₹{{ shipping }}{% endif %}</span></p>
+        <p class="flex justify-between font-bold text-base pt-2 border-t"><span>Total</span><span>₹{{ total }}</span></p>
+      </div>
+      <a href="{% url 'cart:detail' %}" class="block mt-4 text-sm text-forest hover:underline">&larr; Edit cart</a>
+    </aside>
+  </div>
+</div>
+{% endblock %}

@@ -19,7 +19,10 @@ def product_detail(request, slug):
     product = get_object_or_404(
         Product.objects.prefetch_related("variants"), slug=slug, is_active=True
     )
+    variants = list(product.variants.filter(is_active=True))
+    default_variant = next((v for v in variants if v.stock > 0), None)
     return render(request, "catalog/product_detail.html", {
         "product": product,
-        "variants": product.variants.filter(is_active=True),
+        "variants": variants,
+        "default_variant": default_variant,
     })
